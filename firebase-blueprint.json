@@ -1,0 +1,56 @@
+{
+  "entities": {
+    "trades": {
+      "title": "Trade",
+      "description": "User trading journal entries",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "tradeDate": { "type": "string" },
+        "stockName": { "type": "string" },
+        "sector": { "type": "string" },
+        "exchange": { "type": "string" },
+        "segment": { "type": "string" },
+        "direction": { "type": "string" },
+        "tradeType": { "type": "string" },
+        "incomeCategory": { "type": "string" },
+        "strategy": { "type": "string" },
+        "entryPrice": { "type": "number" },
+        "exitPrice": { "type": "number" },
+        "quantity": { "type": "number" },
+        "capitalUsed": { "type": "number" },
+        "status": { "type": "string" }
+      },
+      "required": ["userId", "stockName", "entryPrice", "quantity", "direction", "status"]
+    },
+    "watchlist": {
+      "title": "Watchlist",
+      "description": "User stock watchlist items",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "stockName": { "type": "string" }
+      },
+      "required": ["userId", "stockName"]
+    },
+    "notes": {
+      "title": "Journal Note",
+      "description": "User trading journal notes and reviews",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "body": { "type": "string" }
+      },
+      "required": ["userId", "body"]
+    },
+    "settings": {
+      "title": "User Settings",
+      "description": "User preferences and defaults",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" }
+      },
+      "required": ["userId"]
+    }
+  }
+}

@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-[#0B0E13] text-gray-100 antialiased font-sans selection:bg-[#3ED9B8]/30 selection:text-[#3ED9B8];
+  }
+}
+
+/* Theme classes on root container */
+.theme-terminal-dark {
+  --bg-primary: #0B0E13;
+  --bg-secondary: #12161E;
+  --bg-card: #191F2A;
+  --accent-green: #3ED9B8;
+  --accent-red: #E28B5C;
+}
+
+.theme-paper-light {
+  --bg-primary: #F4F5F7;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #EAECEF;
+  --accent-green: #059669;
+  --accent-red: #DC2626;
+}
+
+.theme-paper-light body,
+.theme-paper-light {
+  background-color: #F4F5F7 !important;
+  color: #1F2937 !important;
+}
+
+.theme-paper-light .bg-\[\#0B0E13\] { background-color: #F4F5F7 !important; }
+.theme-paper-light .bg-\[\#12161E\] { background-color: #FFFFFF !important; border-color: #E5E7EB !important; }
+.theme-paper-light .bg-\[\#161B24\] { background-color: #F9FAFB !important; border-color: #E5E7EB !important; }
+.theme-paper-light .bg-\[\#191F2A\] { background-color: #F3F4F6 !important; border-color: #E5E7EB !important; }
+.theme-paper-light .text-white { color: #111827 !important; }
+.theme-paper-light .text-gray-100 { color: #1F2937 !important; }
+.theme-paper-light .text-gray-300 { color: #374151 !important; }
+.theme-paper-light .text-gray-400 { color: #6B7280 !important; }
+.theme-paper-light .border-gray-800 { border-color: #E5E7EB !important; }
+
+.theme-neon-glow {
+  --bg-primary: #080711;
+  --bg-secondary: #0F0C20;
+  --bg-card: #181335;
+  --accent-green: #00FFCC;
+  --accent-red: #FF0055;
+}
+
+.theme-neon-glow .bg-\[\#0B0E13\] { background-color: #080711 !important; }
+.theme-neon-glow .bg-\[\#12161E\] { background-color: #0F0C20 !important; border-color: #2D2258 !important; }
+.theme-neon-glow .bg-\[\#191F2A\] { background-color: #181335 !important; border-color: #2D2258 !important; }
+
+/* Custom Dark Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0E13;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F2633;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3ED9B8;
+}
+
