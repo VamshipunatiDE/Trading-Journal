@@ -1,7 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, setLogLevel } from 'firebase/firestore';
-import rawConfig from '../../firebase-applet-config.json';
 
 // Silence verbose Firestore internal connection warnings in console when offline or unreachable
 try {
@@ -10,30 +9,51 @@ try {
   // Ignore if unsupported
 }
 
-const firebaseConfigJson = (rawConfig || {}) as Record<string, string | undefined>;
+// Safely attempt to load firebase-applet-config.json if present without breaking builds on external servers
+let firebaseConfigJson: Record<string, string | undefined> = {};
+try {
+  const configs: Record<string, any> = (import.meta as any).glob('/firebase-applet-config.json', { eager: true });
+  const matched = configs['/firebase-applet-config.json'];
+  if (matched) {
+    firebaseConfigJson = matched.default || matched;
+  }
+} catch {
+  // Config file not present in build environment; fall back to environment variables or local state
+}
+
 const metaEnv = (import.meta as Record<string, any>).env || {};
 
-let app: any;
-let auth: ReturnType<typeof getAuth>;
+let app: any = null;
+let auth: ReturnType<typeof getAuth> | null = null;
 let db: ReturnType<typeof getFirestore> | null = null;
-let googleProvider: GoogleAuthProvider;
+let googleProvider: GoogleAuthProvider | null = null;
 
 try {
-  const firebaseConfig = {
-    apiKey: metaEnv.VITE_FIREBASE_API_KEY || firebaseConfigJson.apiKey || '',
-    authDomain: metaEnv.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigJson.authDomain || '',
-    projectId: metaEnv.VITE_FIREBASE_PROJECT_ID || firebaseConfigJson.projectId || '',
-    storageBucket: metaEnv.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigJson.storageBucket || '',
-    messagingSenderId: metaEnv.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigJson.messagingSenderId || '',
-    appId: metaEnv.VITE_FIREBASE_APP_ID || firebaseConfigJson.appId || ''
+  const apiKey = metaEnv.VITE_FIREBASE_API_KEY || firebaseConfigJson.apiKey || '';
+  const authDomain = metaEnv.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfigJson.authDomain || '';
+  const projectId = metaEnv.VITE_FIREBASE_PROJECT_ID || firebaseConfigJson.projectId || '';
+  const storageBucket = metaEnv.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfigJson.storageBucket || '';
+  const messagingSenderId = metaEnv.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfigJson.messagingSenderId || '';
+  const appId = metaEnv.VITE_FIREBASE_APP_ID || firebaseConfigJson.appId || '';
+
+  const firebaseConfig = apiKey ? {
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId
+  } : {
+    apiKey: 'demo-local-api-key',
+    authDomain: 'demo-local-app.firebaseapp.com',
+    projectId: 'demo-local-app'
   };
 
-  if (firebaseConfig.apiKey) {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    auth = getAuth(app);
-    googleProvider = new GoogleAuthProvider();
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
 
-    // Custom database ID support if configured
+  if (apiKey) {
     const customDbId = (firebaseConfigJson.firestoreDatabaseId && firebaseConfigJson.firestoreDatabaseId !== '(default)')
       ? firebaseConfigJson.firestoreDatabaseId
       : (metaEnv.VITE_FIREBASE_DATABASE_ID || undefined);
@@ -47,12 +67,11 @@ try {
     } else {
       db = getFirestore(app);
     }
-  } else {
-    console.warn('Firebase configuration missing API key. Running in local fallback mode.');
   }
 } catch (err) {
-  console.warn('Firebase initialization notice (falling back to local state if offline):', err);
+  console.warn('Firebase initialization notice (running in local fallback mode):', err);
 }
 
 export { app, auth, db, googleProvider };
+
 

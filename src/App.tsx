@@ -65,10 +65,15 @@ export default function App() {
 
   // Listen to Auth State
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
+    if (!auth) return;
+    try {
+      const unsubscribe = onAuthStateChanged(auth, user => {
+        setCurrentUser(user);
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('Auth listener initialization notice:', err);
+    }
   }, []);
 
   // Fetch / Sync Data
